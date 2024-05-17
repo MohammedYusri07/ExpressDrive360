@@ -51,4 +51,3 @@ while True:
         break
     except Exception as e:
         print("Error:", e)
-yusri
