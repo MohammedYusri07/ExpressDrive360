@@ -39,15 +39,16 @@ def measure_distance():
 
     # Calculate time difference and convert to distance
     pulse_duration = stop_time - start_time
-    distance = pulse_duration * 17150  # Speed of sound at room temperature (~20°C)
+    distance_cm = pulse_duration * 17150  # Speed of sound at room temperature (~20°C)
+    distance_m = distance_cm / 100  # Convert to meters
 
-    return distance
+    return distance_m
 
 try:
     while True:
         distance = measure_distance()
-        print("Distance: %.2f cm" % distance)
-        time.sleep(1)
+        print("Distance: %.2f meters" % distance)
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     print("Measurement stopped by user")
