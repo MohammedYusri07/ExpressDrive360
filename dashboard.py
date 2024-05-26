@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import tkintermapview
 import tk_tools as tkt
+from tkdial import Meter
+
 
 
 ctk.set_appearance_mode("dark")  # Modes: system (default), light, dark
@@ -9,42 +11,45 @@ ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 app = ctk.CTk()  # create CTk window like you do with the Tk window
 app.title("Dashboard")
 # app.overrideredirect(True)  # remove window border
-# app.attributes('-fullscreen',True)
+app.attributes('-fullscreen',True)
+#app.state('zoomed')  # Maximize the window
+app.focus_force()  # Force the window to gain focus
+#app.geometry("800x600")  # Set the window size
 
-frame_width = app.winfo_reqwidth() 
-frame_0 = ctk.CTkFrame(master=app,width=frame_width)
-frame_0.pack( pady=10, padx=10, fill="both", expand=True)
+# Add a red close button
+def close_program():
+    app.destroy()
 
-# speed_label = ctk.CTkLabel(master=frame_0, text="Speed", fg_color="transparent")
-# speed_label.pack(pady=10, padx=10, anchor="w")
-# speed_entry = ctk.CTkEntry(master=frame_0, placeholder_text="")
-# speed_entry.pack(pady=10, padx=10,fill="x", anchor="w")
-#
-# acc_label = ctk.CTkLabel(master=frame_0, text="Accelaration", fg_color="transparent")
-# acc_label.pack(pady=10, padx=10, anchor="w")
-# acc_entry = ctk.CTkEntry(master=frame_0, placeholder_text="")
-# acc_entry.pack(pady=10, padx=10, fill="x", anchor="w")
-#
-# ot_label = ctk.CTkLabel(master=frame_0, text="Overtake", fg_color="transparent")
-# ot_label.pack(pady=10, padx=10, anchor="w")
-# ot_entry = ctk.CTkEntry(master=frame_0, placeholder_text="")
-# ot_entry.pack(pady=10, padx=10, fill="x", anchor="w")
+frame_0 = ctk.CTkFrame(master=app)
+frame_0.place(relx=0.03, rely=0.05, relwidth=0.45, relheight=0.45)
+
+frame_1 = ctk.CTkFrame(master=app)
+frame_1.place(relx=0.03, rely=0.51, relwidth=0.45, relheight=0.45)
+
+frame_2 = ctk.CTkFrame(master=app)
+frame_2.place(relx=0.5, rely=0.05, relwidth=0.45, relheight=0.905)
+
+close_button = ctk.CTkButton(master=app, text="X",command=close_program,fg_color="red", hover_color="#ff6666")
+close_button.place(relx=0.955, rely=0.005, relwidth=0.04, relheight=0.03)
 
 
-speed_gauge = tkt.Gauge(frame_0, max_value=100.0,label='speed', unit='km/h',width=frame_width/2,height=100)
-speed_gauge.pack(padx=10,side="left",expand=True,fill="both")
-speed_gauge.set_value(10) # set the value of the gauge
+my_font = ctk.CTkFont(family="digital-7", size=100  )
+speed_label = ctk.CTkLabel(frame_0, text="100" ,font=my_font)
+speed_label.pack(padx=(50,0), side="left")
 
-acc_gauge = tkt.Gauge(frame_0, max_value=100.0,label='Accelaration', unit='km/h^2',width=frame_width/2,height=100)
-acc_gauge.pack(padx=10,side="left",expand=True)
-acc_gauge.set_value(10) # set the value of the gauge
+speed_label = ctk.CTkLabel(frame_0, text="km/h" )
+speed_label.pack(padx=10 , side="left")
 
-frame_1 = ctk.CTkFrame(master=app,width=frame_width)
-frame_1.pack( pady=10, padx=10, fill="both", expand=True)
+meter1 = Meter(frame_0, radius=300, start=50, end=-50, border_width=0,
+               fg="", text_color="white", start_angle=-45, end_angle=270,
+               text_font="DS-Digital 30", scale_color="white", needle_color="red")
+meter1.set_mark(140, 160) # set red marking from 140 to 160
+meter1.set(-5)
+meter1.pack(padx=10,side="left")
 
 # create map widget
-map_widget = tkintermapview.TkinterMapView(frame_1, width=400, height=600, corner_radius=0)
-map_widget.pack(padx=10,pady=10, expand=True )
+map_widget = tkintermapview.TkinterMapView(frame_1, corner_radius=5)
+map_widget.pack(padx=10,pady=10,fill="both",expand=True)
 
 # set current widget position and zoom
 map_widget.set_position(7.4089, 80.6080)  # Paris, France
@@ -52,16 +57,35 @@ map_widget.set_zoom(60)
 marker_3 = map_widget.set_marker(7.4089, 80.6080)
 
 
+ot_font = ctk.CTkFont(family="Robot Crush", size=35  )
+entry = ctk.CTkEntry(frame_2, placeholder_text="Vehicle is going to OverTake",font=ot_font,width=300,
+                               height=25,
+                               border_width=2,
+                               corner_radius=10)
+entry.place(relx=0.1,rely=0.1,relheight=0.08, relwidth=0.8)
+
+entry = ctk.CTkEntry(frame_2, placeholder_text="Do Not OverTake !!!",font=ot_font,width=300,
+                               height=25,
+                               border_width=2,
+                               corner_radius=10)
+entry.place(relx=0.1,rely=0.3,relheight=0.08, relwidth=0.8)
+
+entry = ctk.CTkEntry(frame_2, placeholder_text="Slow Down !!!",font=ot_font,width=300,
+                               height=25,
+                               border_width=2,
+                               corner_radius=10)
+entry.place(relx=0.1,rely=0.5,relheight=0.08, relwidth=0.8)
+
 def send_event():
     print("button pressed")
 
-send_button = ctk.CTkButton(app, text="CTkButton", command=send_event)
-send_button.pack(pady=10, padx=10, anchor="w")
+send_button = ctk.CTkButton(frame_2, text="Overtake", command=send_event)
+send_button.place(relx=0.3, rely=0.7, relwidth=0.17, relheight=0.12)
 
 def button_event():
     print("button pressed")
 
-button = ctk.CTkButton(app, text="CTkButton", command=button_event)
-button.pack(pady=10, padx=10, anchor="w")
+button = ctk.CTkButton(frame_2, text="Cruise Control", command=button_event)
+button.place(relx=0.55, rely=0.7, relwidth=0.17, relheight=0.12)
 
 app.mainloop()
