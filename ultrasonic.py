@@ -47,7 +47,7 @@ def measure_distance():
 try:
     while True:
         distance = measure_distance()
-        print("Distance: %.2f meters" % distance)
+        print("Distance: %.3f meters" % distance)
         time.sleep(0.1)
 
 except KeyboardInterrupt:
